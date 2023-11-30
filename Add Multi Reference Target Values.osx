@@ -1,0 +1,23 @@
+{
+    totalApNc:=0,
+    ApNc:=iterate( 
+             iterate(
+                  filter(
+                      references(Product, 'IngredientToProduct'),
+                      'exact(value("PrimaryProductIndicator"),"Yes")'
+                  ),
+                  'referencetarget()'
+             ),
+             'totalApNc:=totalApNc+value("ActualPrice")/value("NetContents")'
+        ),
+
+	iy:=value("IngYield"),
+	bu:=value("BaseUnit"),
+   	countY:=0,
+	val:=if(exact(bu,"g"),(totalApNc/(iy/100)),""),
+   a:=iterate(
+        references(Product, 'IngredientToProduct'),
+        'countY:=countY+(if(exact(prodval("PrimaryProductIndicator"),"Yes"),1,0))'
+    )
+}
+if(exact(round(val,9),0),"",round(val,9))
